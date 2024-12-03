@@ -117,9 +117,21 @@ Resources:
       Type: "String"
       Value: !Sub "https://${AppRunnerService.ServiceUrl}"
 Outputs:
-  DynamoDBTableName:
-    Description: "Name of the DynamoDB Table"
-    Value: !Ref RoomsTable
-  AppRunnerServiceUrl:
-    Description: "URL of the App Runner Service"
-    Value: !GetAtt AppRunnerService.ServiceUrl
+  RoomsTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: !Sub "Rooms-${AWS::StackName}-${AWS::Region}"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "N"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: true # Enable server-side encryption for the table
+      Tags:
+        - Key: "Project"
+          Value: !Sub "HotelApp-${Environment}"
